@@ -61,7 +61,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean update(User user, Long id) {
-        return false;
+        User oldUser = users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(new User());
+        int index = users.indexOf(oldUser);
+        user.setId(oldUser.getId());
+
+        users.set(index, user);
+
+        return true;
     }
 
     private Long getNextId() {

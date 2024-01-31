@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -24,17 +26,25 @@ public class UserController {
         this.userService = userService;
     }
 
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+    }
+
     @GetMapping
     public ModelAndView getUsersView() {
-        List<User> users = userService.findAll();
         ModelAndView modelAndView = new ModelAndView("users");
-        modelAndView.addObject("users", users);
-        modelAndView.addObject("newUser", new User());
+        modelAndView.addObject("user", new User());
         return modelAndView;
     }
 
     @PostMapping
-    public String addUser(@ModelAttribute User user) {
+    public String addUser(@Valid @ModelAttribute User user, Errors errors) {
+        if (errors.hasErrors()) {
+            log.info("Errors: {}", errors);
+            return "/users";
+        }
         log.info("New user is about to be created: {}", user);
         boolean created = userService.create(user);
         return created ? "redirect:/users?success" : "redirect:/users?fail";
@@ -47,10 +57,18 @@ public class UserController {
         return deleted ? "redirect:/users?success" : "redirect:/users?fail";
     }
 
+    @GetMapping("/edit/{id}")
+    public ModelAndView editUser(@PathVariable Long id) {
+        ModelAndView modelAndView = new ModelAndView("edit_user");
+        User user = userService.findById(id);
+        modelAndView.addObject("user", user);
+        return modelAndView;
+    }
+
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute User user) {
         boolean updated = userService.update(user, id);
-        return updated ? "redirect:/users?success" : "redirect:/users?fail";
+        return "redirect:/users/edit/" + id  +"?success";
     }
 
 

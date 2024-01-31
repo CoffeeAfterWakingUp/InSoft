@@ -6,6 +6,8 @@ import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -31,7 +33,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean create(User user) {
         if (user != null) {
-            return userRepository.create(user);
+            if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
+                if (user.getLastName() != null && !user.getLastName().isEmpty()) {
+                    if (user.getEmail()!= null && !user.getEmail().isEmpty() && user.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                        if (user.getAddress() != null && !user.getAddress().isEmpty()) {
+                            if (user.getBirthDate() != null && user.getBirthDate().compareTo(LocalDate.now(ZoneId.of("UTC+6"))) < 0) {
+                                return userRepository.create(user);
+                            }
+                        }
+                    }
+                }
+            }
         }
         return false;
     }
@@ -46,6 +58,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean update(User user, Long id) {
+        if (user != null && id != null) {
+            if (user.getId().equals(id)) {
+                userRepository.update(user, id);
+            }
+        }
         return false;
     }
 }
