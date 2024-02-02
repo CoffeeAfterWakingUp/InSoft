@@ -66,7 +66,10 @@ public class UserController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute User user) {
+    public String updateUser(@PathVariable Long id, @Valid @ModelAttribute User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return "edit_user";
+        }
         boolean updated = userService.update(user, id);
         return "redirect:/users/edit/" + id  +"?success";
     }
