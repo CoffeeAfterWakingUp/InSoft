@@ -4,6 +4,7 @@ import kz.insoft.usercrudapp.entity.User;
 import kz.insoft.usercrudapp.repository.UserRepository;
 import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(@Qualifier("userRepositoryImpl2") UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface UserRepository {
 
+    String FIND_ALL = "SELECT * FROM user";
+
     List<User> findAll();
 
     User findById(Long id);

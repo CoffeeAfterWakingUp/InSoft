@@ -2,8 +2,11 @@ package kz.insoft.usercrudapp.repository.impl;
 
 import kz.insoft.usercrudapp.entity.User;
 import kz.insoft.usercrudapp.repository.UserRepository;
-import kz.insoft.usercrudapp.repository.db.DbManager;
+import kz.insoft.usercrudapp.repository.rowmapper.UserRowMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -25,108 +28,35 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static List<User> users = new ArrayList<>();
 
+    private final JdbcTemplate jdbcTemplate;
+
+
+    @Autowired
+    public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public List<User> findAll() {
-        List<User> users = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = DbManager.getConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM user");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                User user = new User(
-                        resultSet.getLong("ID"),
-                        resultSet.getString("FIRST_NAME"),
-                        resultSet.getString("LAST_NAME"),
-                        resultSet.getString("EMAIL"),
-                        resultSet.getString("ADDRESS"),
-                        resultSet.getDate("BIRTH_DATE").toLocalDate()
-                );
-                users.add(user);
-            }
-        } catch (Exception e) {
-            log.error("Exception: {}", e.getMessage());
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return users;
+        return jdbcTemplate.query(FIND_ALL, new UserRowMapper());
     }
 
     @Override
     public User findById(Long id) {
-        User user = new User();
-        try (Connection connection = DbManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID);) {
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                user = new User(
-                        resultSet.getLong("ID"),
-                        resultSet.getString("FIRST_NAME"),
-                        resultSet.getString("LAST_NAME"),
-                        resultSet.getString("EMAIL"),
-                        resultSet.getString("ADDRESS"),
-                        resultSet.getDate("BIRTH_DATE").toLocalDate()
-                );
-            }
-        } catch (Exception e) {
-            log.error("Exception: {}", e.getMessage());
-            e.printStackTrace();
-        }
-        return user;
+       return jdbcTemplate.queryForObject(FIND_BY_ID, new UserRowMapper(), id);
     }
 
     @Override
     public boolean create(User user) {
-        try (Connection connection = DbManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(CREATE);) {
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getAddress());
-            preparedStatement.setDate(5, Date.valueOf(user.getBirthDate()));
-
-            int rowsCount = preparedStatement.executeUpdate();
-            if (rowsCount > 0) {
-                return true;
-            }
-        } catch (Exception e) {
-            log.error("Exception: {}", e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
+        int rows = jdbcTemplate.update(CREATE, user.getFirstName(), user.getLastName(), user.getEmail(), user.getAddress(), Date.valueOf(user.getBirthDate()));
+        return rows > 0;
     }
 
     @Override
     public boolean delete(Long id) {
-        try (Connection connection = DbManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);) {
-            preparedStatement.setLong(1, id);
-            int rowsCount = preparedStatement.executeUpdate();
-            if (rowsCount > 0) {
-                return true;
-            }
-        } catch (Exception e) {
-            log.error("Exception: {}", e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
+        String temp = DELETE + id;
+        int rows = jdbcTemplate.update(temp);
+        return rows > 0;
     }
 
     @Override
@@ -141,9 +71,5 @@ public class UserRepositoryImpl implements UserRepository {
         users.set(index, user);
 
         return true;
-    }
-
-    private Long getNextId() {
-        return Long.valueOf(users.size() + 1);
     }
 }
