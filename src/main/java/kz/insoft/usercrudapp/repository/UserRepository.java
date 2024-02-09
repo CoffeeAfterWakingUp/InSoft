@@ -1,21 +1,32 @@
 package kz.insoft.usercrudapp.repository;
 
 import kz.insoft.usercrudapp.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    String FIND_ALL = "SELECT * FROM user";
+    User findByEmail(String email);
 
-    List<User> findAll();
+    User findByFirstNameAndLastName(String firstName, String lastName);
 
-    User findById(Long id);
+    List<User> findByAddressIn(List<String> addressList);
 
-    boolean create(User user);
+    @Query(value = "select count(u) from User u", nativeQuery = false)
+    int findUsersCount();
 
-    boolean delete(Long id);
+    User findByBirthDateAfter(LocalDate date);
 
-    boolean update(User user, Long id);
+    User findByBirthDateBefore(LocalDate date);
 
+    @Modifying
+    @Transactional
+    @Query("delete from User u where u.email=:email")
+    void deleteByEmail(@Param(value = "email") String email);
 }

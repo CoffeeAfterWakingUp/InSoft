@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("userRepositoryImpl2") UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElse(new User());
     }
 
     @Override
@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService {
                     if (user.getEmail()!= null && !user.getEmail().isEmpty() && user.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                         if (user.getAddress() != null && !user.getAddress().isEmpty()) {
                             if (user.getBirthDate() != null && user.getBirthDate().compareTo(LocalDate.now(ZoneId.of("UTC+6"))) < 0) {
-                                return userRepository.create(user);
+                                User newUser = userRepository.save(user);
+                                return newUser.getId() != null;
                             }
                         }
                     }
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean delete(Long id) {
         if (id != null) {
-            return userRepository.delete(id);
+            userRepository.deleteById(id);
+            return true;
         }
         return false;
     }
@@ -61,9 +63,45 @@ public class UserServiceImpl implements UserService {
     public boolean update(User user, Long id) {
         if (user != null && id != null) {
             if (user.getId().equals(id)) {
-                userRepository.update(user, id);
+                User updUser = userRepository.save(user);
+                return updUser.getId() != null;
             }
         }
         return false;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findByFirstNameAndLastName(String firstName, String lastName) {
+        return userRepository.findByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @Override
+    public List<User> findByAddressIn(List<String> addressList) {
+        return userRepository.findByAddressIn(addressList);
+    }
+
+    @Override
+    public int findUsersCount() {
+        return userRepository.findUsersCount();
+    }
+
+    @Override
+    public User findByBirthDateAfter(LocalDate date) {
+        return userRepository.findByBirthDateAfter(date);
+    }
+
+    @Override
+    public User findByBirthDateBefore(LocalDate date) {
+        return userRepository.findByBirthDateBefore(date);
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        userRepository.deleteByEmail(email);
     }
 }
