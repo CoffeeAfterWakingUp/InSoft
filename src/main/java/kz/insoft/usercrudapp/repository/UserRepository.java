@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -29,4 +30,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("delete from User u where u.email=:email")
     void deleteByEmail(@Param(value = "email") String email);
+
+    @Override
+    @Query("select u from User u " +
+            "LEFT JOIN FETCH u.userDetails " +
+            "LEFT JOIN FETCH u.phoneList " +
+            "LEFT JOIN FETCH u.departments " +
+            "WHERE u.id = ?1")
+    Optional<User> findById(Long aLong);
 }

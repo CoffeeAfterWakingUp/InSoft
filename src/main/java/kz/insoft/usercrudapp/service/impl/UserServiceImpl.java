@@ -104,4 +104,19 @@ public class UserServiceImpl implements UserService {
     public void deleteByEmail(String email) {
         userRepository.deleteByEmail(email);
     }
+
+    @Override
+    public User createAndReturn(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateAndReturn(User user, Long id) {
+        if (user != null && id != null) {
+            if (user.getId().equals(id)) {
+                return userRepository.save(user);
+            }
+        }
+        return null;
+    }
 }

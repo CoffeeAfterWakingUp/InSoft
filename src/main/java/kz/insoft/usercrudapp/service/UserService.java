@@ -13,9 +13,13 @@ public interface UserService {
 
     boolean create(User user);
 
+    User createAndReturn(User user);
+
     boolean delete(Long id);
 
     boolean update(User user, Long id);
+
+    User updateAndReturn(User user, Long id);
 
     User findByEmail(String email);
 

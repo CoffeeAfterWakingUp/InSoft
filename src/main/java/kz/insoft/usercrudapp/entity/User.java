@@ -1,10 +1,7 @@
 package kz.insoft.usercrudapp.entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,13 +10,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_user")
+@Table(name = "user")
+@EqualsAndHashCode(exclude = {"userDetails", "phoneList", "departments"})
 public class User {
 
     @Id
@@ -54,5 +56,52 @@ public class User {
     private String text;
 
 
+    @OneToOne(mappedBy = "user",
+            cascade = CascadeType.ALL)
+    private UserDetails userDetails;
 
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<UserPhone> phoneList = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<Department> departments = new HashSet<>();
+
+
+
+    public void setUserDetails(UserDetails userDetails) {
+        if (userDetails != null) {
+            userDetails.setUser(this);
+        } else {
+            if (this.userDetails != null) {
+                this.userDetails.setUser(null);
+            }
+        }
+        this.userDetails = userDetails;
+    }
+
+    public void addPhone(UserPhone userPhone) {
+        phoneList.add(userPhone);
+        userPhone.setUser(this);
+    }
+
+    public void removePhone(UserPhone userPhone) {
+        phoneList.remove(userPhone);
+        userPhone.setUser(null);
+    }
+
+//    @Override
+//    public String toString() {
+//        return "User{" +
+//                "id=" + id +
+//                ", firstName='" + firstName + '\'' +
+//                ", lastName='" + lastName + '\'' +
+//                ", email='" + email + '\'' +
+//                ", address='" + address + '\'' +
+//                ", birthDate=" + birthDate +
+//                ", text='" + text + '\'' +
+//                '}';
+//    }
 }
