@@ -67,28 +67,28 @@ public class UserCrudappApplication {
 
 		// MANY TO MANY
 
-		User user = userService.findById(2L);
-
-		User user3 = userService.findById(3L);
-
-		Department department1 = Department.builder()
-				.name("IT")
-				.build();
-
-		Department department2 = Department.builder()
-				.name("Finance")
-				.build();
-
-		department1.addUser(user);
-		department1.addUser(user3);
-
-		department2.addUser(user);
-
-		Department itDept = departmentRepository.save(department1);
-		Department financeDept = departmentRepository.save(department2);
-
-		log.info("Department IT: {}", itDept);
-		log.info("Department Finance: {}", financeDept);
+//		User user = userService.findById(2L);
+//
+//		User user3 = userService.findById(3L);
+//
+//		Department department1 = Department.builder()
+//				.name("IT")
+//				.build();
+//
+//		Department department2 = Department.builder()
+//				.name("Finance")
+//				.build();
+//
+//		department1.addUser(user);
+//		department1.addUser(user3);
+//
+//		department2.addUser(user);
+//
+//		Department itDept = departmentRepository.save(department1);
+//		Department financeDept = departmentRepository.save(department2);
+//
+//		log.info("Department IT: {}", itDept);
+//		log.info("Department Finance: {}", financeDept);
 
 		/**
 		 *
