@@ -1,14 +1,14 @@
 package kz.insoft.usercrudapp.rest;
 
+import kz.insoft.usercrudapp.dto.ResponseDTO;
 import kz.insoft.usercrudapp.dto.UserDTO;
 import kz.insoft.usercrudapp.entity.User;
 import kz.insoft.usercrudapp.mapper.UserMapper;
 import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,15 +32,25 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<UserDTO>> getUserById(@PathVariable Long id) {
         User user = userService.findById(id);
-        return userMapper.toDto(user);
+        UserDTO userDTO = userMapper.toDto(user);
+        HttpStatus httpStatus = HttpStatus.OK;
+        ResponseDTO<UserDTO> responseDTO = new ResponseDTO<>(httpStatus, userDTO, httpStatus.value());
+        return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/email/{email}")
     public UserDTO getUserByEmail(@PathVariable String email) {
         User user = userService.findByEmail(email);
         return userMapper.toDto(user);
+    }
+
+    @PostMapping
+    public UserDTO createUser(@RequestBody UserDTO userDTO) {
+        User user = userMapper.toEntity(userDTO);
+        User newUser = userService.createAndReturn(user);
+        return userMapper.toDto(newUser);
     }
 
 }

@@ -85,6 +85,7 @@ public class User {
     }
 
     public void addPhone(UserPhone userPhone) {
+        if (phoneList == null) phoneList = new ArrayList<>();
         phoneList.add(userPhone);
         userPhone.setUser(this);
     }

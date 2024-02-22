@@ -14,4 +14,13 @@ public class UserPhoneMapper implements Mapper<UserPhoneDTO, UserPhone> {
                 .type(userPhone.getType())
                 .build();
     }
+
+    @Override
+    public UserPhone toEntity(UserPhoneDTO userPhoneDTO) {
+        if (userPhoneDTO == null) return null;
+        return UserPhone.builder()
+                .phoneNumber(userPhoneDTO.getPhoneNumber())
+                .type(userPhoneDTO.getType())
+                .build();
+    }
 }

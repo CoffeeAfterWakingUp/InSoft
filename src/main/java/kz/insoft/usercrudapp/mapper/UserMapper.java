@@ -20,6 +20,7 @@ public class UserMapper implements Mapper<UserDTO, User>{
     }
 
     public UserDTO toDto(User user) {
+        if (user == null) return null;
         return UserDTO.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
@@ -31,5 +32,22 @@ public class UserMapper implements Mapper<UserDTO, User>{
                 .departments(departmentMapper.toDtoList(user.getDepartments()))
                 .phones(userPhoneMapper.toDtoList(user.getPhoneList()))
                 .build();
+    }
+
+    @Override
+    public User toEntity(UserDTO userDTO) {
+        if (userDTO == null) return null;
+        User user = User.builder()
+                .firstName(userDTO.getFirstName())
+                .lastName(userDTO.getLastName())
+                .address(userDTO.getAddress())
+                .birthDate(userDTO.getBirthDate())
+                .email(userDTO.getEmail())
+                .build();
+        user.setUserDetails(userDetailsMapper.toEntity(userDTO.getDetails()));
+        userDTO.getPhones().stream()
+                .map(p -> userPhoneMapper.toEntity(p))
+                .forEach(user::addPhone);
+        return user;
     }
 }

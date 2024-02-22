@@ -1,14 +1,18 @@
 package kz.insoft.usercrudapp.mapper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface Mapper<D, E> {
+public interface Mapper<DTO, ENTITY> {
 
-    D toDto(E e);
+    DTO toDto(ENTITY e);
 
-    default List<D> toDtoList(Collection<E> eList) {
+    ENTITY toEntity(DTO dto);
+
+    default List<DTO> toDtoList(Collection<ENTITY> eList) {
+        if (eList == null) return new ArrayList<>();
         return eList.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
