@@ -59,7 +59,8 @@ public class User {
 
 
     @OneToOne(mappedBy = "user",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
     private UserDetails userDetails;
 
 

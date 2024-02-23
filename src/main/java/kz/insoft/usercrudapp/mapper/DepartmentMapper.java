@@ -19,6 +19,7 @@ public class DepartmentMapper implements Mapper<DepartmentDTO, Department>{
     public Department toEntity(DepartmentDTO departmentDTO) {
         if (departmentDTO == null) return null;
         return Department.builder()
+                .id(departmentDTO.getId())
                 .name(departmentDTO.getName())
                 .build();
     }

@@ -1,6 +1,7 @@
 package kz.insoft.usercrudapp.service.impl;
 
 import kz.insoft.usercrudapp.entity.User;
+import kz.insoft.usercrudapp.entity.UserDetails;
 import kz.insoft.usercrudapp.repository.UserRepository;
 import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -114,7 +116,57 @@ public class UserServiceImpl implements UserService {
     public User updateAndReturn(User user, Long id) {
         if (user != null && id != null) {
             if (user.getId().equals(id)) {
-                return userRepository.save(user);
+                Optional<User> foundUserOpt = userRepository.findById(id);
+                if (foundUserOpt.isPresent()) {
+                    UserDetails userDetails = user.getUserDetails();
+                    userDetails.setId(user.getId());
+                    user.getPhoneList().forEach(p -> p.setUser(user));
+                    return userRepository.save(user);
+                }
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public User updateEmail(User user, Long id) {
+        if (user != null && id != null) {
+            Optional<User> foundUserOpt = userRepository.findById(id);
+            if (foundUserOpt.isPresent()) {
+                User foundUser = foundUserOpt.get();
+                if (user.getEmail() != null) {
+                    foundUser.setEmail(user.getEmail());
+                    return userRepository.save(foundUser);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public User updatePatch(User user, Long id) {
+        if (user != null && id != null) {
+            Optional<User> foundUserOpt = userRepository.findById(id);
+            if (foundUserOpt.isPresent()) {
+                User foundUser = foundUserOpt.get();
+                if (user.getEmail() != null) {
+                    foundUser.setEmail(user.getEmail());
+                }
+                if (user.getBirthDate() != null) {
+                    foundUser.setBirthDate(user.getBirthDate());
+                }
+                if (user.getFirstName() != null) {
+                    foundUser.setFirstName(user.getFirstName());
+                }
+                if (user.getLastName() != null) {
+                    foundUser.setLastName(user.getLastName());
+                }
+                if (user.getAddress() != null) {
+                    foundUser.setAddress(user.getAddress());
+                }
+
+                return userRepository.save(foundUser);
             }
         }
         return null;

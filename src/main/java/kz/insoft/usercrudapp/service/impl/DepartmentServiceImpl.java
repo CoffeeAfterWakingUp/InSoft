@@ -48,4 +48,15 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (department == null) return null;
         return departmentRepository.save(department);
     }
+
+    @Override
+    public Department updateAndReturn(Department department, Long id) {
+        if (department != null && id != null) {
+            Optional<Department> departmentOpt = departmentRepository.findById(id);
+            if (departmentOpt.isPresent()) {
+                return departmentRepository.save(department);
+            }
+        }
+        return null;
+    }
 }

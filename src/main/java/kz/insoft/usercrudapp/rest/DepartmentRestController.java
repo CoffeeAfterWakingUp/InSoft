@@ -40,4 +40,14 @@ public class DepartmentRestController {
         ResponseDTO<DepartmentDTO> responseDTO = new ResponseDTO<>(httpStatus, dto, httpStatus.value());
         return new ResponseEntity<>(responseDTO, httpStatus);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDTO<DepartmentDTO>> updateDepartment(@RequestBody DepartmentDTO departmentDTO,
+                                                                       @PathVariable Long id) {
+        Department department = departmentMapper.toEntity(departmentDTO);
+        Department newDepartment = departmentService.updateAndReturn(department, id);
+        DepartmentDTO depDto = departmentMapper.toDto(newDepartment);
+        ResponseDTO<DepartmentDTO> responseDTO = new ResponseDTO<>(HttpStatus.OK, depDto, HttpStatus.OK.value());
+        return ResponseEntity.ok(responseDTO);
+    }
 }

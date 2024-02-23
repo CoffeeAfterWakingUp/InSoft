@@ -34,4 +34,8 @@ public interface UserService {
     User findByBirthDateBefore(LocalDate date);
 
     void deleteByEmail(String email);
+
+    User updateEmail(User user, Long id);
+
+    User updatePatch(User user, Long id);
 }

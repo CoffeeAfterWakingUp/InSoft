@@ -8,4 +8,6 @@ public interface DepartmentService {
 
     Department createAndReturn(Department department);
 
+    Department updateAndReturn(Department department, Long id);
+
 }

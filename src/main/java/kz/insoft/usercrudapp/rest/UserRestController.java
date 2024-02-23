@@ -53,4 +53,39 @@ public class UserRestController {
         return userMapper.toDto(newUser);
     }
 
+    @PutMapping("/{id}")
+    public UserDTO updateUser(@RequestBody UserDTO userDTO,
+                              @PathVariable Long id) {
+        User user = userMapper.toEntity(userDTO);
+        User newUser = userService.updateAndReturn(user, id);
+        return userMapper.toDto(newUser);
+    }
+
+    @PatchMapping("/updEmail/{id}")
+    public ResponseEntity<ResponseDTO<UserDTO>> updateEmail(@RequestBody UserDTO userDTO,
+                                                            @PathVariable Long id) {
+        User user = userMapper.toEntity(userDTO);
+        User updUser = userService.updateEmail(user, id);
+        UserDTO dto = userMapper.toDto(updUser);
+        ResponseDTO<UserDTO> responseDTO = new ResponseDTO<>(HttpStatus.OK, dto, HttpStatus.OK.value());
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseDTO<UserDTO>> updatePatch(@RequestBody UserDTO userDTO,
+                                                            @PathVariable Long id) {
+        User user = userMapper.toEntity(userDTO);
+        User updUser = userService.updatePatch(user, id);
+        UserDTO dto = userMapper.toDto(updUser);
+        ResponseDTO<UserDTO> responseDTO = new ResponseDTO<>(HttpStatus.OK, dto, HttpStatus.OK.value());
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO<Boolean>> deleteUser(@PathVariable Long id) {
+        Boolean delete = userService.delete(id);
+        ResponseDTO<Boolean> dto = new ResponseDTO<>(HttpStatus.OK, delete, HttpStatus.OK.value());
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
 }
