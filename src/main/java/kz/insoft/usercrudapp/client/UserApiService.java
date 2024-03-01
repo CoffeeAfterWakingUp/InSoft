@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -50,8 +52,23 @@ public class UserApiService {
     }
 
     public void getByEmail(String email) {
-        UserDTO userDTO = restTemplate.getForObject("http://localhost:8080/api/v1/users/email/{email}", UserDTO.class, email);
-        log.info("By email {}: {}", email, userDTO);
+     //   UserDTO userDTO = restTemplate.getForObject("http://localhost:8080/api/v1/users/email/{email}", UserDTO.class, email);
+        try {
+            MultiValueMap<String, String> headers = new HttpHeaders();
+            headers.put("MY-API-TOKEN", Arrays.asList("MySecret123"));
+            HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+            ResponseEntity<UserDTO> responseEntity = restTemplate.exchange("http://localhost:8080/api/v1/users/email/{email}",
+                    HttpMethod.GET, httpEntity, UserDTO.class, email);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                if (responseEntity.getBody() != null) {
+                    log.info("By email {}: {}", email, responseEntity.getBody());
+                }
+            } else {
+                log.error("Error: {}", responseEntity.getStatusCodeValue());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteUserById() {
@@ -64,4 +81,6 @@ public class UserApiService {
                 24L);
         log.info("User is deleted");
     }
+
+
 }

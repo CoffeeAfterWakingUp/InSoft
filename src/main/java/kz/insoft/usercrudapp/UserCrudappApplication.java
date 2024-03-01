@@ -6,10 +6,12 @@ import kz.insoft.usercrudapp.client.UserApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class})
 public class UserCrudappApplication {
 
 	public static void main(String[] args) {
@@ -17,16 +19,7 @@ public class UserCrudappApplication {
 		ConfigurableApplicationContext context = SpringApplication.run(UserCrudappApplication.class, args);
 
 		UserApiService userApiService = context.getBean(UserApiService.class);
-		DepartmentApiService departmentApiService = context.getBean(DepartmentApiService.class);
-
-//		userApiService.getAllUsers();
-//		userApiService.getById(23L);
-//		userApiService.getByEmail("newEmail23@mail.com");
-		userApiService.deleteUserById();
-
-
-		//departmentApiService.createDepartment();
-		//departmentApiService.updateDepartment();
+		userApiService.getByEmail("test1@mail.com");
 
 	}
 

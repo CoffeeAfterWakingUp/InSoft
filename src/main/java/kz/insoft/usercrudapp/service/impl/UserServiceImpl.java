@@ -2,6 +2,7 @@ package kz.insoft.usercrudapp.service.impl;
 
 import kz.insoft.usercrudapp.entity.User;
 import kz.insoft.usercrudapp.entity.UserDetails;
+import kz.insoft.usercrudapp.exception.UserNotFoundException;
 import kz.insoft.usercrudapp.repository.UserRepository;
 import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            return user;
+        }
+        throw new UserNotFoundException("User with email " + email + " not found!");
     }
 
     @Override
