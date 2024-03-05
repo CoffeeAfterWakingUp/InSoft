@@ -11,15 +11,15 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.context.ConfigurableApplicationContext;
 
 @Slf4j
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class})
+@SpringBootApplication
 public class UserCrudappApplication {
 
 	public static void main(String[] args) {
 
 		ConfigurableApplicationContext context = SpringApplication.run(UserCrudappApplication.class, args);
-
-		UserApiService userApiService = context.getBean(UserApiService.class);
-		userApiService.getByEmail("test1@mail.com");
+//
+//		UserApiService userApiService = context.getBean(UserApiService.class);
+//		userApiService.getByEmail("test1@mail.com");
 
 	}
 

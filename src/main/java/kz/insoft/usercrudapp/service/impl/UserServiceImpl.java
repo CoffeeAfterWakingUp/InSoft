@@ -7,6 +7,8 @@ import kz.insoft.usercrudapp.repository.UserRepository;
 import kz.insoft.usercrudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,13 +17,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        if (email != null) {
+            User user = userRepository.findByEmail(email);
+            if (user != null) {
+                return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
+            }
+        }
+        return null;
     }
 
     @Override

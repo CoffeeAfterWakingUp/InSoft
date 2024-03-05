@@ -3,6 +3,7 @@ package kz.insoft.usercrudapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import kz.insoft.usercrudapp.enums.Role;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,6 +45,9 @@ public class User {
     @Column(name = "EMAIL", nullable = false, unique = true, length = 255)
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
     @NotBlank(message = "Address has not to be blank!")
     @Column(name = "ADDRESS", nullable = false, length = 255)
     private String address;
@@ -71,6 +75,14 @@ public class User {
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private Set<Department> departments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<UserRole> roles = new HashSet<>();
+
+
 
 
 
