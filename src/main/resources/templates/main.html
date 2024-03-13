@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div sec:authorize="isAuthenticated()">
+        <span>Welcome, <span sec:authentication="name">Username</span></span>
+
+        <div sec:authorize="hasRole('ROLE_USER')">
+            You are user! Go there <a href="/user">link</a>
+        </div>
+
+        <div sec:authorize="hasRole('ROLE_ADMIN')">
+            You are admin! Go there <a href="/admin">link</a>
+        </div>
+    </div>
+
+    <div sec:authorize="!isAuthenticated()">
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+
+</body>
+</html>
