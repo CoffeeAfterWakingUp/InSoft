@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NewsDTO {
 
-
+    @JsonProperty(value = "id")
+    private Long id;
     @JsonProperty(value = "title")
     private String title;
     @JsonProperty(value = "snippet")

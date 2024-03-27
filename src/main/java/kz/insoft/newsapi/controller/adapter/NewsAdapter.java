@@ -37,6 +37,7 @@ public class NewsAdapter {
 
     private NewsDTO toDto(News news) {
         return NewsDTO.builder()
+                .id(news.getId())
                 .title(news.getTitle())
                 .author(news.getAuthor())
                 .fullText(news.getFullText())
@@ -48,6 +49,7 @@ public class NewsAdapter {
 
     private News toEntity(NewsDTO dto) {
         return News.builder()
+                .id(dto.getId())
                 .title(dto.getTitle())
                 .author(dto.getAuthor())
                 .snippet(dto.getSnippet())
