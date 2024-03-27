@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -27,8 +27,11 @@
                     <a class="nav-link" href="#">Pricing</a>
                 </li>
             </ul>
-            <span class="navbar-text">
-                <a href="">Login</a> | <a href="">Register</a>
+            <span class="navbar-text" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">Login</a> | <a th:href="@{/register}">Register</a>
+            </span>
+            <span class="navbar-text" sec:authorize="isAuthenticated()">
+                <span sec:authentication="name">Email</span> | <a th:href="@{/logout}">Logout</a>
             </span>
         </div>
     </div>
